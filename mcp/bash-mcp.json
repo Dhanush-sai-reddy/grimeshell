@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "bash": {
+      "command": "npx",
+      "args": ["-y", "bash-mcp"],
+      "env": {},
+      "allowedCommands": [
+        "ls",
+        "cat",
+        "grep",
+        "find",
+        "head",
+        "tail",
+        "wc",
+        "sort",
+        "uniq",
+        "sed",
+        "awk",
+        "git",
+        "gh",
+        "tmux",
+        "shellcheck",
+        "node",
+        "npm",
+        "npx",
+        "python3",
+        "pip",
+        "ruff",
+        "jq",
+        "curl",
+        "paru",
+        "lsd",
+        "fzf"
+      ]
+    }
+  }
+}

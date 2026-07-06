@@ -1,0 +1,127 @@
+# ============================================================================
+# SHELLLL — Agent Shell Environment
+# Source this file from bash or zsh to activate the agent environment.
+#   source /home/dhanushsr/Downloads/mygit/SHELLLL/.agent_bashrc
+# ============================================================================
+
+# --- Guard against double-sourcing -----------------------------------------
+if [ -n "${SHELLLL_LOADED:-}" ]; then
+    return 0 2>/dev/null || exit 0
+fi
+
+# --- Core Variables --------------------------------------------------------
+export SHELLLL_ROOT="/home/dhanushsr/Downloads/mygit/SHELLLL"
+export SHELLLL_LOADED=1
+
+# --- API Keys --------------------------------------------------------------
+# Paste your API keys here! (Make sure not to commit this file if it's public)
+export GEMINI_API_KEY="AIzaSyAw6M5pjjXpssezKRW2eFh5JVQo3h5ZArU"
+# export ANTHROPIC_API_KEY="your_anthropic_api_key_here"
+# export OPENAI_API_KEY="your_openai_api_key_here"
+
+# --- PATH Additions -------------------------------------------------------
+# Local binaries, npm globals, SHELLLL scripts
+_shellll_prepend_path() {
+    case ":${PATH}:" in
+        *:"$1":*) ;;          # Already in PATH
+        *) export PATH="$1:$PATH" ;;
+    esac
+}
+
+_shellll_prepend_path "$SHELLLL_ROOT/node_modules/.bin"
+_shellll_prepend_path "$SHELLLL_ROOT/scripts"
+_shellll_prepend_path "$HOME/.local/bin"
+_shellll_prepend_path "$HOME/.npm-global/bin"
+_shellll_prepend_path "$HOME/.cargo/bin"
+
+# --- Editor ----------------------------------------------------------------
+export EDITOR="${EDITOR:-nvim}"
+export VISUAL="${VISUAL:-$EDITOR}"
+
+# --- Agent Identity --------------------------------------------------------
+export AGENT_NAME="${AGENT_NAME:-shellll-agent}"
+export AGENT_SESSION_ID="${AGENT_SESSION_ID:-session_$(date +%Y%m%d_%H%M%S)_$$}"
+export AGENT_BRAIN="$SHELLLL_ROOT/Agent.md"
+
+# --- Projects Root ---------------------------------------------------------
+export PROJECTS_ROOT="/home/dhanushsr/Downloads/mygit"
+
+# --- Aliases ---------------------------------------------------------------
+# Core SHELLLL commands
+alias smell='bash "$SHELLLL_ROOT/scripts/smell.sh"'
+alias compact='bash "$SHELLLL_ROOT/scripts/context-compact.sh"'
+alias clear-ctx='bash "$SHELLLL_ROOT/scripts/context-clear.sh"'
+alias agent-launch='bash "$SHELLLL_ROOT/scripts/agent-launch.sh"'
+alias agent-sandbox='bash "$SHELLLL_ROOT/scripts/agent-sandbox.sh"'
+alias ksync='bash "$SHELLLL_ROOT/scripts/knowledge-sync.sh"'
+
+# Quick navigation
+alias brain='cd "$SHELLLL_ROOT"'
+alias projects='cd "$PROJECTS_ROOT"'
+alias knowledge='cd "$SHELLLL_ROOT/knowledge"'
+
+# Git shortcuts (agent-friendly)
+alias gs='git status --short --branch'
+alias gl='git log --oneline --graph -20'
+alias gd='git diff --stat'
+alias ga='git add -A'
+alias gc='git commit'
+alias gp='git push'
+
+# Utility
+alias ll='lsd -la --group-directories-first 2>/dev/null || ls -la --color=auto'
+alias lt='lsd --tree --depth 3 2>/dev/null || tree -L 3'
+alias cat='bat --paging=never 2>/dev/null || cat'
+
+# --- Functions -------------------------------------------------------------
+
+# Quick status of the SHELLLL brain
+shellll_status() {
+    echo "╭─────────────────────────────────────╮"
+    echo "│        SHELLLL Agent Status         │"
+    echo "╰─────────────────────────────────────╯"
+    echo "  Agent:     $AGENT_NAME"
+    echo "  Session:   $AGENT_SESSION_ID"
+    echo "  Root:      $SHELLLL_ROOT"
+    echo "  Shell:     ${SHELL##*/}"
+    echo "  Editor:    $EDITOR"
+    echo ""
+    if [ -d "$SHELLLL_ROOT/.git" ]; then
+        echo "  Git branch: $(git -C "$SHELLLL_ROOT" branch --show-current 2>/dev/null || echo 'N/A')"
+        echo "  Git status: $(git -C "$SHELLLL_ROOT" status --short 2>/dev/null | wc -l) changed files"
+    fi
+    echo ""
+}
+
+# Auto-source agent env when creating tmux sessions
+# Usage: agent_tmux <session-name>
+agent_tmux() {
+    local session_name="${1:-agent}"
+    tmux new-session -d -s "$session_name" 2>/dev/null || true
+    tmux send-keys -t "$session_name" "source '$SHELLLL_ROOT/.agent_bashrc' && shellll_status" Enter
+    tmux attach-session -t "$session_name"
+}
+
+# Quick search across knowledge base
+knowledge_search() {
+    local query="${1:?Usage: knowledge_search <query>}"
+    grep -rni --color=always "$query" "$SHELLLL_ROOT/knowledge/" 2>/dev/null || echo "No results found."
+}
+
+# Read the brain (Agent.md)
+read_brain() {
+    if command -v bat &>/dev/null; then
+        bat --paging=never "$SHELLLL_ROOT/Agent.md"
+    else
+        cat "$SHELLLL_ROOT/Agent.md"
+    fi
+}
+
+# --- Startup Message -------------------------------------------------------
+# Only show in interactive shells
+case "$-" in
+    *i*)
+        printf '\033[0;36m[SHELLLL]\033[0m Agent environment loaded — %s @ %s\n' \
+            "$AGENT_NAME" "$(date +%H:%M:%S)"
+        ;;
+esac

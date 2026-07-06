@@ -1,0 +1,49 @@
+# Sandboxes (git worktrees created by agent-sandbox)
+.sandboxes/
+
+# Knowledge archives
+knowledge/archive/
+
+# Node modules (if any MCP tools installed locally)
+node_modules/
+package-lock.json
+
+# MCP server local installs — NEVER commit actual MCP binaries/caches
+# Only JSON config references (.json files in mcp/) are tracked
+mcp/servers/
+mcp/.cache/
+mcp/venvs/
+mcp/.uv/
+mcp/.venv/
+__pycache__/
+*.pyc
+*.pyo
+.uv/
+.venv/
+uv.lock
+
+# UV / pip caches
+.cache/
+*.egg-info/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# HF Space credentials (set these in .agent_bashrc instead)
+.hf_token

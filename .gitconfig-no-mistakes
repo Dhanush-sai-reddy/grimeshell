@@ -1,0 +1,33 @@
+# No Mistakes Git Configuration
+#
+# This configures the 'no-mistakes' git remote as a validation proxy.
+# Instead of pushing directly to origin, push to no-mistakes first:
+#
+#   git push no-mistakes main
+#
+# It will:
+# 1. Create a disposable worktree
+# 2. Run validation pipeline (smell check, tests, lint)
+# 3. If checks pass → forward to origin
+# 4. If checks fail → capture errors and report
+#
+# Setup:
+#   git remote add no-mistakes $(npx -y no-mistakes remote-url)
+#
+# Or manually configure the validation pipeline:
+
+[no-mistakes]
+    # Validation commands to run before forwarding push
+    validate = bash hooks/pre-commit.sh
+    validate = bash scripts/smell.sh .
+    
+    # Auto-fix with AI agent on failure (optional)
+    # autofix = true
+    # autofix-agent = gemini
+    
+    # Forward to this remote on success
+    upstream = origin
+    
+    # Create PR instead of direct push
+    create-pr = true
+    pr-template = templates/pr-review.md

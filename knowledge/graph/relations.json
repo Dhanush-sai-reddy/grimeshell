@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "updated": "2026-07-01T15:15:00+05:30",
+  "relations": [
+    {"from": "shellll", "to": "tmux", "type": "uses", "note": "agent sessions run in tmux"},
+    {"from": "shellll", "to": "gh-cli", "type": "uses", "note": "GitHub operations"},
+    {"from": "shellll", "to": "gh-axi", "type": "uses", "note": "preferred over raw MCP"},
+    {"from": "shellll", "to": "gemini", "type": "depends_on", "note": "primary AI backend"},
+    {"from": "shellll", "to": "no-mistakes", "type": "uses", "note": "validation pipeline"},
+    {"from": "shellll", "to": "bash-mcp", "type": "uses", "note": "shell access for agents"},
+    {"from": "shellll", "to": "fzf", "type": "uses", "note": "fuzzy selection in scripts"},
+    {"from": "shellll", "to": "shellcheck", "type": "uses", "note": "script linting"},
+    {"from": "gh-axi", "to": "gh-cli", "type": "extends", "note": "AXI is a gh extension"},
+    {"from": "no-mistakes", "to": "gh-cli", "type": "depends_on", "note": "wraps git operations"},
+    {"from": "cachyos", "to": "shellll", "type": "hosts", "note": "runs on this system"},
+    {"from": "train-ticket", "to": "shellll", "type": "managed_by", "note": "agent can work on this project"}
+  ]
+}

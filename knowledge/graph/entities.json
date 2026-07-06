@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "updated": "2026-07-01T15:15:00+05:30",
+  "entities": [
+    {
+      "id": "shellll",
+      "type": "project",
+      "name": "SHELLLL",
+      "description": "Terminal-first AI agent brain repository",
+      "path": "/home/dhanushsr/Downloads/mygit/SHELLLL"
+    },
+    {
+      "id": "train-ticket",
+      "type": "project",
+      "name": "Train-Ticket-booking-system",
+      "tech": ["node", "prisma"],
+      "path": "/home/dhanushsr/Downloads/mygit/Train-Ticket-booking-system"
+    },
+    {
+      "id": "fullcalendar",
+      "type": "project",
+      "name": "fullcalendar",
+      "path": "/home/dhanushsr/Downloads/mygit/fullcalendar"
+    },
+    {
+      "id": "flfullstack",
+      "type": "project",
+      "name": "flfullstack",
+      "path": "/home/dhanushsr/Downloads/mygit/flfullstack"
+    },
+    {
+      "id": "cachy-configs",
+      "type": "project",
+      "name": "cachy-configs",
+      "description": "CachyOS system configuration files",
+      "path": "/home/dhanushsr/Downloads/mygit/cachy-configs"
+    },
+    {
+      "id": "unified-campus",
+      "type": "project",
+      "name": "Unified-campus-resource-and-event-management",
+      "path": "/home/dhanushsr/Downloads/mygit/Unified-campus-resource-and-event-management"
+    },
+    {
+      "id": "neocodeium",
+      "type": "project",
+      "name": "neocodeium",
+      "path": "/home/dhanushsr/Downloads/mygit/neocodeium"
+    },
+    {
+      "id": "cachyos",
+      "type": "system",
+      "name": "CachyOS",
+      "base": "arch",
+      "package_manager": ["paru", "yay"]
+    },
+    {
+      "id": "tmux",
+      "type": "tool",
+      "name": "tmux",
+      "purpose": "terminal multiplexer for agent sessions"
+    },
+    {
+      "id": "gh-cli",
+      "type": "tool",
+      "name": "GitHub CLI",
+      "purpose": "GitHub operations from terminal"
+    },
+    {
+      "id": "gh-axi",
+      "type": "tool",
+      "name": "gh-axi",
+      "purpose": "token-efficient GitHub via AXI protocol"
+    },
+    {
+      "id": "gemini",
+      "type": "ai-backend",
+      "name": "Gemini (Antigravity)",
+      "primary": true
+    },
+    {
+      "id": "no-mistakes",
+      "type": "tool",
+      "name": "No Mistakes",
+      "purpose": "git validation proxy to prevent bad commits"
+    },
+    {
+      "id": "bash-mcp",
+      "type": "tool",
+      "name": "Bash MCP",
+      "purpose": "shell access via MCP protocol"
+    },
+    {
+      "id": "fzf",
+      "type": "tool",
+      "name": "fzf",
+      "purpose": "fuzzy finder for terminal"
+    },
+    {
+      "id": "lsd",
+      "type": "tool",
+      "name": "lsd",
+      "purpose": "modern ls replacement with icons"
+    },
+    {
+      "id": "shellcheck",
+      "type": "tool",
+      "name": "ShellCheck",
+      "purpose": "shell script static analyzer"
+    }
+  ]
+}

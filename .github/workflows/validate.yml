@@ -1,0 +1,123 @@
+name: SHELLLL Brain Validation
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: Validate Brain Integrity
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Validate shell scripts
+        run: |
+          echo "🔍 Checking shell scripts..."
+          FAILED=0
+          for script in scripts/*.sh hooks/*.sh setup.sh; do
+            if [ -f "$script" ]; then
+              echo "  Checking $script..."
+              shellcheck -x "$script" || FAILED=1
+            fi
+          done
+          if [ $FAILED -eq 1 ]; then
+            echo "❌ Shell script validation failed"
+            exit 1
+          fi
+          echo "✅ All shell scripts pass shellcheck"
+
+      - name: Validate JSON files
+        run: |
+          echo "🔍 Checking JSON files..."
+          FAILED=0
+          for json in knowledge/graph/*.json mcp/*.json; do
+            if [ -f "$json" ]; then
+              echo "  Checking $json..."
+              python3 -c "import json; json.load(open('$json'))" || FAILED=1
+            fi
+          done
+          if [ $FAILED -eq 1 ]; then
+            echo "❌ JSON validation failed"
+            exit 1
+          fi
+          echo "✅ All JSON files are valid"
+
+      - name: Validate skill frontmatter
+        run: |
+          echo "🔍 Checking skill frontmatter..."
+          FAILED=0
+          for skill in skills/*.md; do
+            if [ -f "$skill" ] && [ "$(basename "$skill")" != "SKILL_TEMPLATE.md" ]; then
+              if ! head -1 "$skill" | grep -q "^---"; then
+                echo "  ❌ $skill missing YAML frontmatter"
+                FAILED=1
+              else
+                echo "  ✅ $skill"
+              fi
+            fi
+          done
+          if [ $FAILED -eq 1 ]; then
+            echo "❌ Skill frontmatter validation failed"
+            exit 1
+          fi
+          echo "✅ All skills have valid frontmatter"
+
+      - name: Validate Agent.md structure
+        run: |
+          echo "🔍 Checking Agent.md..."
+          REQUIRED_SECTIONS=("Identity" "Environment" "Memory Protocol" "Skills Index" "Quality Standards" "Communication Style" "Error Handling")
+          FAILED=0
+          for section in "${REQUIRED_SECTIONS[@]}"; do
+            if ! grep -q "## $section" Agent.md; then
+              echo "  ❌ Missing section: $section"
+              FAILED=1
+            else
+              echo "  ✅ Found section: $section"
+            fi
+          done
+          if [ $FAILED -eq 1 ]; then
+            echo "❌ Agent.md validation failed"
+            exit 1
+          fi
+          echo "✅ Agent.md structure is valid"
+
+      - name: Validate knowledge graph integrity
+        run: |
+          echo "🔍 Checking knowledge graph..."
+          python3 -c "
+          import json, sys
+
+          with open('knowledge/graph/entities.json') as f:
+              entities = json.load(f)
+          with open('knowledge/graph/relations.json') as f:
+              relations = json.load(f)
+
+          entity_ids = {e['id'] for e in entities.get('entities', [])}
+          orphans = []
+          for r in relations.get('relations', []):
+              if r['from'] not in entity_ids:
+                  orphans.append(f\"relation from '{r['from']}' references unknown entity\")
+              if r['to'] not in entity_ids:
+                  orphans.append(f\"relation to '{r['to']}' references unknown entity\")
+
+          if orphans:
+              for o in orphans:
+                  print(f'  ❌ {o}')
+              sys.exit(1)
+
+          print(f'  ✅ {len(entity_ids)} entities, {len(relations[\"relations\"])} relations, 0 orphans')
+          "
+          echo "✅ Knowledge graph is valid"
