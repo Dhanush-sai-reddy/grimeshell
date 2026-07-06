@@ -3,18 +3,23 @@
     "name": "HuggingFace Official MCP Server",
     "source": "https://huggingface.co/blog/mcp-server",
     "npm": "@huggingface/mcp-server",
-    "type": "stdio",
     "description": "Official HuggingFace MCP server — search models, datasets, papers, spaces on the Hub. Also exposes all Gradio-based HF Spaces as callable MCP tools.",
-    "tags": ["huggingface", "hub", "models", "datasets", "papers", "spaces"]
+    "tags": ["huggingface", "hub", "models", "datasets", "papers", "spaces"],
+    "_usage": "Pick ONE of the entries below: 'huggingface-online' (SSE, no install) or 'huggingface' (local npx download)"
   },
   "mcpServers": {
+    "huggingface-online": {
+      "type": "sse",
+      "url": "https://huggingface-mcp-server.hf.space/gradio_api/mcp/sse",
+      "description": "[ONLINE] Connect to HF's hosted MCP Space — no install, needs internet"
+    },
     "huggingface": {
       "command": "npx",
       "args": ["-y", "@huggingface/mcp-server"],
       "env": {
         "HF_TOKEN": "${HF_TOKEN}"
       },
-      "description": "Official HF MCP — search Hub (models, datasets, papers, spaces), use HF Inference API tools"
+      "description": "[LOCAL] Download & run @huggingface/mcp-server via npx — cached after first run"
     }
   }
 }

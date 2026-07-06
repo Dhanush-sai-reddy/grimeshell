@@ -4,13 +4,14 @@
     "source": "https://huggingface.co/spaces/agents-mcp-hackathon/Consilium-mcp",
     "type": "sse",
     "description": "Multi-AI expert consensus platform. Multiple LLM agents deliberate around a boardroom table, debate complex queries using BFT-derived Consilium Protocol, and reach consensus via majority vote or ranked-choice. Treats model disagreement as an epistemic signal.",
-    "tags": ["multi-agent", "consensus", "deliberation", "discussion", "council", "BFT", "hackathon"]
+    "tags": ["multi-agent", "consensus", "deliberation", "discussion", "council", "BFT", "hackathon"],
+    "_usage": "Online only — no published local package. Clone the Space repo to self-host."
   },
   "mcpServers": {
     "consilium": {
       "type": "sse",
       "url": "https://agents-mcp-hackathon-consilium-mcp.hf.space/gradio_api/mcp/sse",
-      "description": "Consilium — summon a council of AI experts to deliberate and reach consensus on any question"
+      "description": "[ONLINE] Consilium — summon a council of AI experts to deliberate and reach consensus"
     }
   }
 }

@@ -114,6 +114,7 @@ Skills are procedure files in `skills/`. Read the full skill file before executi
 | Browser Research | Web research, documentation lookup | `skills/browser_interviewer.md` |
 | Teach Mode | User wants to learn or understand something | `skills/teach.md` |
 | Debug Loop | Systematic debugging of failures | `skills/debug_loop.md` |
+| vLLM Engine | Local LLM inference, `vllm-start`, `/vllm` | `skills/vllm.md` |
 
 ### Skill Activation Rules
 
@@ -223,6 +224,10 @@ Errors are learning opportunities. Handle them systematically.
 | `knowledge_search <q>` | Search knowledge base |
 | `read_brain` | Display this file |
 | `agent_tmux [name]` | Create tmux session with agent env |
+| `vllm-start [model]` | Start vLLM local inference server in tmux |
+| `vllm-stop` | Kill the vLLM server tmux session |
+| `vllm-status` | Health-check the local vLLM server |
+| `vllm-models` | List models loaded in the vLLM server |
 
 ---
 

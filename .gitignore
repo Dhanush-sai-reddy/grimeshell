@@ -5,8 +5,9 @@ keys/*
 # Sandboxes (git worktrees created by agent-sandbox)
 .sandboxes/
 
-# Knowledge archives
-knowledge/archive/
+# Knowledge base — personal memory, project map, decisions, mistakes
+# This is local-only brain state. Never commit it.
+knowledge/
 
 # Node modules (if any MCP tools installed locally)
 node_modules/

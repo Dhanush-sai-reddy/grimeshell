@@ -5,13 +5,14 @@
     "model": "baidu/Unlimited-OCR",
     "type": "sse",
     "description": "Baidu Unlimited-OCR — 32K context, constant KV-cache, one-shot multi-page document/PDF OCR. MIT license.",
-    "tags": ["ocr", "pdf", "document-parsing", "baidu", "unlimited"]
+    "tags": ["ocr", "pdf", "document-parsing", "baidu", "unlimited"],
+    "_usage": "Online only — no published local package. Clone the Space repo to self-host."
   },
   "mcpServers": {
     "unlimited-ocr": {
       "type": "sse",
       "url": "https://baidu-unlimited-ocr.hf.space/gradio_api/mcp/sse",
-      "description": "Unlimited-OCR — transcribe multi-page PDFs & images in one shot, 32K context window"
+      "description": "[ONLINE] Unlimited-OCR — transcribe multi-page PDFs & images in one shot, 32K context"
     }
   }
 }

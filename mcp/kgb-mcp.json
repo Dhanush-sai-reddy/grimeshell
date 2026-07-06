@@ -3,15 +3,26 @@
     "name": "KGB-MCP — Knowledge Graph Builder",
     "source": "https://huggingface.co/spaces/agents-mcp-hackathon/kgb-mcp",
     "github": "https://github.com/rebots-online/hKG-ontologizer-KGB-mcp",
-    "type": "sse",
     "description": "Knowledge Graph Builder MCP server. Transforms raw text or web content into structured, queryable knowledge graphs using local LLMs (Ollama/LM Studio). Supports 300MB+ content via intelligent chunking, Neo4j/Qdrant persistence, and real-time SVG graph visualization.",
-    "tags": ["knowledge-graph", "neo4j", "qdrant", "entities", "relations", "ontology", "RAG", "visualization"]
+    "tags": ["knowledge-graph", "neo4j", "qdrant", "entities", "relations", "ontology", "RAG", "visualization"],
+    "_usage": "Pick ONE: 'kgb-mcp' (online SSE) or 'kgb-mcp-local' (clone & run)"
   },
   "mcpServers": {
     "kgb-mcp": {
       "type": "sse",
       "url": "https://agents-mcp-hackathon-kgb-mcp.hf.space/gradio_api/mcp/sse",
-      "description": "KGB — build & query knowledge graphs from text/URLs, persist to Neo4j/Qdrant, visualize as SVG"
+      "description": "[ONLINE] KGB via HF Space — no install"
+    },
+    "kgb-mcp-local": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/rebots-online/hKG-ontologizer-KGB-mcp", "kgb-mcp"],
+      "env": {
+        "NEO4J_URI": "${NEO4J_URI:-}",
+        "NEO4J_PASSWORD": "${NEO4J_PASSWORD:-}",
+        "QDRANT_URL": "${QDRANT_URL:-}",
+        "QDRANT_API_KEY": "${QDRANT_API_KEY:-}"
+      },
+      "description": "[LOCAL] Clone & run via uvx — needs Neo4j/Qdrant for persistence"
     }
   }
 }

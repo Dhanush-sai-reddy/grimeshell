@@ -6,13 +6,19 @@
     "type": "sse",
     "description": "Security middleware that intercepts any state-mutating MCP tool call and requires human approval before execution. Supports OS dialogs, Slack, Teams, Webex, or CLI fallback. Built on FastMCP.",
     "tags": ["security", "human-in-the-loop", "middleware", "approval", "safety", "citation"],
-    "award": "Best Overall — MCP's 1st Birthday Hackathon"
+    "award": "Best Overall — MCP's 1st Birthday Hackathon",
+    "_usage": "Pick ONE: 'cite-before-act' (online SSE) or 'cite-before-act-local' (clone & run)"
   },
   "mcpServers": {
     "cite-before-act": {
       "type": "sse",
       "url": "https://mcp-1st-birthday-cite-before-act.hf.space/gradio_api/mcp/sse",
-      "description": "Safety middleware — intercepts mutating tool calls, shows preview, waits for human approval before executing"
+      "description": "[ONLINE] Safety middleware via HF Space — no install"
+    },
+    "cite-before-act-local": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/MCP-1st-Birthday/cite-before-act", "cite-before-act"],
+      "description": "[LOCAL] Clone & run via uvx — no HF dependency"
     }
   }
 }

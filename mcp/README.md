@@ -121,6 +121,18 @@ Strips boilerplate, extracts semantic structure for RAG and data pipelines.
 
 ---
 
+### 11. `vllm.json` — vLLM Local Inference Engine
+Run open-weight LLMs locally with GPU acceleration. Zero cloud, zero cost, zero data egress.
+Exposes an OpenAI-compatible REST API; bridged to MCP via `openai-mcp-server`.
+
+- **Type**: `stdio` / `npx`
+- **Command**: `npx -y openai-mcp-server`
+- **Env**: `VLLM_BASE_URL` (default `http://localhost:8000/v1`), `VLLM_MODEL`, `VLLM_API_KEY`
+- **Requires**: vLLM running locally (`vllm-start` alias or `skills/vllm.md`)
+- **Tags**: local-llm, gpu, privacy, openai-compatible, inference
+
+---
+
 ## Authentication
 
 HF-hosted SSE servers may require `HF_TOKEN` in your environment.

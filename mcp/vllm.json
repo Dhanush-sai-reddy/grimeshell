@@ -1,0 +1,27 @@
+{
+  "_info": {
+    "name": "vLLM Local Engine",
+    "source": "https://github.com/vllm-project/vllm",
+    "type": "stdio",
+    "description": "Local LLM inference engine via vLLM's OpenAI-compatible REST API. Serves open-weight models (Llama, Mistral, Qwen, etc.) locally with GPU acceleration. Bridged to MCP via the openai-mcp-server adapter.",
+    "tags": ["local-llm", "vllm", "openai-compatible", "gpu", "inference", "privacy"],
+    "requirements": {
+      "vllm": "pip install vllm  (Python 3.10+, CUDA 12+)",
+      "adapter": "npx -y openai-mcp-server"
+    },
+    "default_port": 8000,
+    "health_check": "curl http://localhost:8000/health"
+  },
+  "mcpServers": {
+    "vllm": {
+      "command": "npx",
+      "args": ["-y", "openai-mcp-server"],
+      "env": {
+        "OPENAI_API_KEY": "${VLLM_API_KEY:-not-needed}",
+        "OPENAI_BASE_URL": "${VLLM_BASE_URL:-http://localhost:8000/v1}",
+        "OPENAI_MODEL": "${VLLM_MODEL:-default}"
+      },
+      "description": "Routes LLM calls to a local vLLM server via OpenAI-compatible API. No cloud, no cost, no data leaving the machine."
+    }
+  }
+}
