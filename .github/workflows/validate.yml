@@ -23,101 +23,236 @@ jobs:
       - name: Install shellcheck
         run: sudo apt-get install -y shellcheck
 
+      # ── Shell scripts ────────────────────────────────────────────────────────
+      # Severity: error-only (SC2xxx warnings are informational, not blockers).
+      # Style/info issues are excluded; only real bugs (undefined vars, bad
+      # quoting that causes word splitting, etc.) fail the build.
       - name: Validate shell scripts
+        id: shellcheck
         run: |
-          echo "🔍 Checking shell scripts..."
+          echo "::group::shellcheck results"
           FAILED=0
+          CHECKED=0
+          ERRORS=0
+
           for script in scripts/*.sh hooks/*.sh setup.sh; do
-            if [ -f "$script" ]; then
-              echo "  Checking $script..."
-              shellcheck -x "$script" || FAILED=1
+            [ -f "$script" ] || continue
+            CHECKED=$((CHECKED + 1))
+
+            # Run shellcheck; capture output with GHA annotation format
+            if ! output=$(shellcheck \
+                --severity=error \
+                --format=gcc \
+                --external-sources \
+                "$script" 2>&1); then
+
+              FAILED=1
+              # Convert gcc format → GitHub Actions error annotations
+              while IFS= read -r line; do
+                # gcc format: file:line:col: severity: message [SC####]
+                if [[ "$line" =~ ^([^:]+):([0-9]+):[0-9]+:[[:space:]]*(error|warning):[[:space:]]*(.*) ]]; then
+                  file="${BASH_REMATCH[1]}"
+                  lineno="${BASH_REMATCH[2]}"
+                  sev="${BASH_REMATCH[3]}"
+                  msg="${BASH_REMATCH[4]}"
+                  echo "::error file=${file},line=${lineno}::shellcheck ${sev}: ${msg}"
+                  ERRORS=$((ERRORS + 1))
+                fi
+              done <<< "$output"
+
+            else
+              echo "  ✅  $script — clean"
             fi
           done
-          if [ $FAILED -eq 1 ]; then
-            echo "❌ Shell script validation failed"
+
+          echo "::endgroup::"
+          echo ""
+          echo "Scripts checked : $CHECKED"
+          echo "Errors found    : $ERRORS"
+
+          if [ "$FAILED" -eq 1 ]; then
+            echo ""
+            echo "❌  shellcheck found errors in one or more scripts."
+            echo "    Fix the issues above (annotated inline on the diff) and push again."
+            echo "    Run locally:  shellcheck --severity=error <file>"
             exit 1
           fi
-          echo "✅ All shell scripts pass shellcheck"
 
+          echo "✅  All $CHECKED shell scripts pass shellcheck (--severity=error)"
+
+      # ── JSON files ───────────────────────────────────────────────────────────
       - name: Validate JSON files
+        id: json-check
         run: |
-          echo "🔍 Checking JSON files..."
+          echo "::group::JSON validation"
           FAILED=0
+          CHECKED=0
+
           for json in knowledge/graph/*.json mcp/*.json; do
-            if [ -f "$json" ]; then
-              echo "  Checking $json..."
-              python3 -c "import json; json.load(open('$json'))" || FAILED=1
-            fi
-          done
-          if [ $FAILED -eq 1 ]; then
-            echo "❌ JSON validation failed"
-            exit 1
-          fi
-          echo "✅ All JSON files are valid"
+            [ -f "$json" ] || continue
+            CHECKED=$((CHECKED + 1))
 
-      - name: Validate skill frontmatter
-        run: |
-          echo "🔍 Checking skill frontmatter..."
-          FAILED=0
-          for skill in skills/*.md; do
-            if [ -f "$skill" ] && [ "$(basename "$skill")" != "SKILL_TEMPLATE.md" ]; then
-              if ! head -1 "$skill" | grep -q "^---"; then
-                echo "  ❌ $skill missing YAML frontmatter"
-                FAILED=1
-              else
-                echo "  ✅ $skill"
-              fi
-            fi
-          done
-          if [ $FAILED -eq 1 ]; then
-            echo "❌ Skill frontmatter validation failed"
-            exit 1
-          fi
-          echo "✅ All skills have valid frontmatter"
-
-      - name: Validate Agent.md structure
-        run: |
-          echo "🔍 Checking Agent.md..."
-          REQUIRED_SECTIONS=("Identity" "Environment" "Memory Protocol" "Skills Index" "Quality Standards" "Communication Style" "Error Handling")
-          FAILED=0
-          for section in "${REQUIRED_SECTIONS[@]}"; do
-            if ! grep -q "## $section" Agent.md; then
-              echo "  ❌ Missing section: $section"
+            if ! err=$(python3 -c "
+import json, sys
+try:
+    json.load(open('$json'))
+except json.JSONDecodeError as e:
+    print(f'{e}')
+    sys.exit(1)
+" 2>&1); then
+              echo "::error file=${json}::Invalid JSON — ${err}"
               FAILED=1
             else
-              echo "  ✅ Found section: $section"
+              echo "  ✅  $json"
             fi
           done
-          if [ $FAILED -eq 1 ]; then
-            echo "❌ Agent.md validation failed"
+
+          echo "::endgroup::"
+          echo "JSON files checked: $CHECKED"
+
+          if [ "$FAILED" -eq 1 ]; then
+            echo ""
+            echo "❌  One or more JSON files are malformed."
+            echo "    Validate locally:  python3 -m json.tool <file>"
             exit 1
           fi
-          echo "✅ Agent.md structure is valid"
 
-      - name: Validate knowledge graph integrity
+          echo "✅  All $CHECKED JSON files are valid"
+
+      # ── Skills frontmatter ──────────────────────────────────────────────────
+      - name: Validate skill frontmatter
+        id: skills-check
         run: |
-          echo "🔍 Checking knowledge graph..."
-          python3 -c "
-          import json, sys
+          echo "::group::Skill frontmatter"
+          FAILED=0
+          CHECKED=0
 
-          with open('knowledge/graph/entities.json') as f:
-              entities = json.load(f)
-          with open('knowledge/graph/relations.json') as f:
-              relations = json.load(f)
+          for skill in skills/*.md; do
+            [ -f "$skill" ] || continue
+            [ "$(basename "$skill")" = "SKILL_TEMPLATE.md" ] && continue
+            CHECKED=$((CHECKED + 1))
 
-          entity_ids = {e['id'] for e in entities.get('entities', [])}
-          orphans = []
-          for r in relations.get('relations', []):
-              if r['from'] not in entity_ids:
-                  orphans.append(f\"relation from '{r['from']}' references unknown entity\")
-              if r['to'] not in entity_ids:
-                  orphans.append(f\"relation to '{r['to']}' references unknown entity\")
+            if ! head -1 "$skill" | grep -q "^---"; then
+              echo "::error file=${skill},line=1::Missing YAML frontmatter — first line must be '---'"
+              FAILED=1
+            else
+              echo "  ✅  $skill"
+            fi
+          done
 
-          if orphans:
-              for o in orphans:
-                  print(f'  ❌ {o}')
-              sys.exit(1)
+          echo "::endgroup::"
+          echo "Skills checked: $CHECKED"
 
-          print(f'  ✅ {len(entity_ids)} entities, {len(relations[\"relations\"])} relations, 0 orphans')
-          "
-          echo "✅ Knowledge graph is valid"
+          if [ "$FAILED" -eq 1 ]; then
+            echo ""
+            echo "❌  One or more skill files are missing YAML frontmatter."
+            echo "    Each skills/*.md must start with '---' on line 1."
+            exit 1
+          fi
+
+          echo "✅  All $CHECKED skill files have valid frontmatter"
+
+      # ── Agent.md sections ───────────────────────────────────────────────────
+      - name: Validate Agent.md structure
+        id: agent-md-check
+        run: |
+          echo "::group::Agent.md sections"
+          FAILED=0
+          REQUIRED_SECTIONS=(
+            "Identity"
+            "Environment"
+            "Memory Protocol"
+            "Skills Index"
+            "Quality Standards"
+            "Communication Style"
+            "Error Handling"
+          )
+
+          for section in "${REQUIRED_SECTIONS[@]}"; do
+            lineno=$(grep -n "^## ${section}" Agent.md | head -1 | cut -d: -f1)
+            if [ -z "$lineno" ]; then
+              echo "::error file=Agent.md::Missing required section: '## ${section}'"
+              FAILED=1
+            else
+              echo "  ✅  ## ${section}  (line ${lineno})"
+            fi
+          done
+
+          echo "::endgroup::"
+
+          if [ "$FAILED" -eq 1 ]; then
+            echo ""
+            echo "❌  Agent.md is missing one or more required sections."
+            echo "    Required headings: ${REQUIRED_SECTIONS[*]}"
+            exit 1
+          fi
+
+          echo "✅  Agent.md contains all ${#REQUIRED_SECTIONS[@]} required sections"
+
+      # ── Knowledge graph integrity ───────────────────────────────────────────
+      - name: Validate knowledge graph integrity
+        id: graph-check
+        run: |
+          echo "::group::Knowledge graph"
+          python3 - <<'PYEOF'
+import json, sys
+
+with open('knowledge/graph/entities.json') as f:
+    entities = json.load(f)
+with open('knowledge/graph/relations.json') as f:
+    relations = json.load(f)
+
+entity_ids = {e['id'] for e in entities.get('entities', [])}
+orphans = []
+
+for r in relations.get('relations', []):
+    if r['from'] not in entity_ids:
+        orphans.append(f"  relation from='{r['from']}' → unknown entity id")
+    if r['to'] not in entity_ids:
+        orphans.append(f"  relation to='{r['to']}' → unknown entity id")
+
+if orphans:
+    for o in orphans:
+        # Emit as GHA error annotation pointed at the relations file
+        print(f"::error file=knowledge/graph/relations.json::{o.strip()}")
+    print(f"\n❌  {len(orphans)} orphaned relation(s) found — fix knowledge/graph/relations.json")
+    sys.exit(1)
+
+n_rel = len(relations.get('relations', []))
+print(f"  ✅  {len(entity_ids)} entities  ·  {n_rel} relations  ·  0 orphans")
+PYEOF
+          echo "::endgroup::"
+          echo "✅  Knowledge graph integrity confirmed"
+
+      # ── Summary ─────────────────────────────────────────────────────────────
+      - name: Summary
+        if: always()
+        run: |
+          echo ""
+          echo "╔══════════════════════════════════════════╗"
+          echo "║       SHELLLL Brain Validation           ║"
+          echo "╠══════════════════════════════════════════╣"
+
+          result() {
+            local id="$1" label="$2"
+            local outcome
+            outcome=$(echo '${{ toJSON(steps) }}' | python3 -c "
+import json,sys
+steps=json.load(sys.stdin)
+sid='$id'
+if sid in steps:
+    o=steps[sid].get('outcome','skipped')
+    print({'success':'✅  PASS','failure':'❌  FAIL','skipped':'⏭   SKIP'}.get(o,'?   '+o))
+else:
+    print('⏭   SKIP')
+" 2>/dev/null || echo "?")
+            printf "║  %-20s  %s\n" "$label" "$outcome"
+          }
+
+          result shellcheck      "Shell scripts"
+          result json-check      "JSON files"
+          result skills-check    "Skill frontmatter"
+          result agent-md-check  "Agent.md sections"
+          result graph-check     "Knowledge graph"
+
+          echo "╚══════════════════════════════════════════╝"
