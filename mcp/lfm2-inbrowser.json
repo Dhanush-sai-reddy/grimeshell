@@ -1,0 +1,16 @@
+{
+  "_info": {
+    "name": "LFM2 In-Browser Tool Calling MCP",
+    "source": "https://huggingface.co/spaces/LiquidAI/LFM2-MCP",
+    "type": "sse",
+    "description": "Liquid AI LFM2 running entirely in-browser via WebGPU + Transformers.js. Zero cloud dependency, real MCP tool-calling from the browser.",
+    "tags": ["in-browser", "webgpu", "transformers.js", "tool-calling", "edge-llm"]
+  },
+  "mcpServers": {
+    "lfm2-inbrowser": {
+      "type": "sse",
+      "url": "https://liquidai-lfm2-mcp.hf.space/gradio_api/mcp/sse",
+      "description": "LFM2 1B/3B in-browser agentic tool calling — runs on WebGPU, no API key needed"
+    }
+  }
+}

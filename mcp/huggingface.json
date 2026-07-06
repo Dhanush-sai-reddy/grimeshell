@@ -1,0 +1,20 @@
+{
+  "_info": {
+    "name": "HuggingFace Official MCP Server",
+    "source": "https://huggingface.co/blog/mcp-server",
+    "npm": "@huggingface/mcp-server",
+    "type": "stdio",
+    "description": "Official HuggingFace MCP server — search models, datasets, papers, spaces on the Hub. Also exposes all Gradio-based HF Spaces as callable MCP tools.",
+    "tags": ["huggingface", "hub", "models", "datasets", "papers", "spaces"]
+  },
+  "mcpServers": {
+    "huggingface": {
+      "command": "npx",
+      "args": ["-y", "@huggingface/mcp-server"],
+      "env": {
+        "HF_TOKEN": "${HF_TOKEN}"
+      },
+      "description": "Official HF MCP — search Hub (models, datasets, papers, spaces), use HF Inference API tools"
+    }
+  }
+}

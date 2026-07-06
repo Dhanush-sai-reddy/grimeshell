@@ -1,3 +1,7 @@
+# Keys folder — ignore all actual key files, keep only README
+keys/*
+!keys/README.md
+
 # Sandboxes (git worktrees created by agent-sandbox)
 .sandboxes/
 

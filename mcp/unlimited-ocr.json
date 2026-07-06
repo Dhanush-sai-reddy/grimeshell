@@ -1,0 +1,17 @@
+{
+  "_info": {
+    "name": "Unlimited OCR MCP",
+    "source": "https://huggingface.co/spaces/baidu/Unlimited-OCR",
+    "model": "baidu/Unlimited-OCR",
+    "type": "sse",
+    "description": "Baidu Unlimited-OCR — 32K context, constant KV-cache, one-shot multi-page document/PDF OCR. MIT license.",
+    "tags": ["ocr", "pdf", "document-parsing", "baidu", "unlimited"]
+  },
+  "mcpServers": {
+    "unlimited-ocr": {
+      "type": "sse",
+      "url": "https://baidu-unlimited-ocr.hf.space/gradio_api/mcp/sse",
+      "description": "Unlimited-OCR — transcribe multi-page PDFs & images in one shot, 32K context window"
+    }
+  }
+}

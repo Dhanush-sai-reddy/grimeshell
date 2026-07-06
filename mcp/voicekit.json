@@ -1,0 +1,16 @@
+{
+  "_info": {
+    "name": "VoiceKit MCP — Audio Analysis Server",
+    "source": "https://huggingface.co/spaces/MCP-1st-Birthday/voicekit",
+    "type": "sse",
+    "description": "Audio analysis MCP server from MCP's 1st Birthday hackathon. Tools: transcribe speech, isolate voices, compare voice embeddings, extract acoustic features. Deployed as a Gradio Space with SSE MCP endpoint.",
+    "tags": ["audio", "voice", "transcription", "speaker-isolation", "embeddings", "acoustic", "gradio"]
+  },
+  "mcpServers": {
+    "voicekit": {
+      "type": "sse",
+      "url": "https://mcp-1st-birthday-voicekit.hf.space/gradio_api/mcp/sse",
+      "description": "VoiceKit — transcribe audio, isolate voices, compare speakers, extract acoustic features via MCP"
+    }
+  }
+}

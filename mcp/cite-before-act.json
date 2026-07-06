@@ -1,0 +1,18 @@
+{
+  "_info": {
+    "name": "Cite-Before-Act MCP (Best Overall — MCP 1st Birthday Hackathon)",
+    "source": "https://huggingface.co/spaces/MCP-1st-Birthday/cite-before-act",
+    "github": "https://github.com/MCP-1st-Birthday/cite-before-act",
+    "type": "sse",
+    "description": "Security middleware that intercepts any state-mutating MCP tool call and requires human approval before execution. Supports OS dialogs, Slack, Teams, Webex, or CLI fallback. Built on FastMCP.",
+    "tags": ["security", "human-in-the-loop", "middleware", "approval", "safety", "citation"],
+    "award": "Best Overall — MCP's 1st Birthday Hackathon"
+  },
+  "mcpServers": {
+    "cite-before-act": {
+      "type": "sse",
+      "url": "https://mcp-1st-birthday-cite-before-act.hf.space/gradio_api/mcp/sse",
+      "description": "Safety middleware — intercepts mutating tool calls, shows preview, waits for human approval before executing"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "_info": {
+    "name": "MCP_HTML2JSON — Structured HTML to JSON",
+    "source": "https://huggingface.co/spaces/garage-lab/MCP_HTML2JSON",
+    "type": "sse",
+    "description": "Converts structured HTML into clean JSON for AI agent consumption. Strips boilerplate, extracts semantic structure. Useful for web scraping, RAG pipelines, and data extraction agents.",
+    "tags": ["html", "json", "scraping", "parsing", "structured-data", "RAG"]
+  },
+  "mcpServers": {
+    "html2json": {
+      "type": "sse",
+      "url": "https://garage-lab-mcp-html2json.hf.space/gradio_api/mcp/sse",
+      "description": "HTML2JSON — convert any webpage's HTML into clean structured JSON for agent consumption"
+    }
+  }
+}

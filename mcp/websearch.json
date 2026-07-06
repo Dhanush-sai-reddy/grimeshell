@@ -1,0 +1,29 @@
+{
+  "_info": {
+    "name": "Web Search MCP",
+    "source": "https://huggingface.co/spaces",
+    "type": "sse",
+    "description": "Gradio-hosted web search MCP server. Provides real-time web search, news search, and article content extraction for AI agents.",
+    "tags": ["websearch", "news", "scraping", "retrieval", "gradio"]
+  },
+  "mcpServers": {
+    "websearch": {
+      "type": "sse",
+      "url": "https://huggingface-projects-websearch-mcp-server.hf.space/gradio_api/mcp/sse",
+      "description": "Real-time web search + news + content extraction via Gradio MCP SSE",
+      "_alternatives": [
+        "Use npx @modelcontextprotocol/server-brave-search if you have a Brave API key",
+        "Or npx -y tavily-mcp with TAVILY_API_KEY",
+        "Or: uvx mcp-server-fetch for URL fetching"
+      ]
+    },
+    "websearch-brave": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      },
+      "description": "Brave Search MCP — set BRAVE_API_KEY in .agent_bashrc"
+    }
+  }
+}

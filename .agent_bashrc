@@ -14,10 +14,39 @@ export SHELLLL_ROOT="/home/dhanushsr/Downloads/mygit/SHELLLL"
 export SHELLLL_LOADED=1
 
 # --- API Keys --------------------------------------------------------------
-# Paste your API keys here! (Make sure not to commit this file if it's public)
-export GEMINI_API_KEY="AIzaSyAw6M5pjjXpssezKRW2eFh5JVQo3h5ZArU"
-# export ANTHROPIC_API_KEY="your_anthropic_api_key_here"
-# export OPENAI_API_KEY="your_openai_api_key_here"
+# Keys are loaded from:
+#   1. keys/<name>  (plain text files, gitignored)
+#   2. .env         (gitignored, overrides keys/ if both set)
+# Never hardcode keys here — add them to keys/ or .env instead.
+
+# Load a key from keys/ into an env var (silently skips if file missing)
+_load_key() {
+    local var="$1"
+    local file="$SHELLLL_ROOT/keys/$2"
+    if [[ -f "$file" ]] && [[ -z "${!var:-}" ]]; then
+        export "$var"="$(tr -d '[:space:]' < "$file")"
+    fi
+}
+
+# Auto-load from keys/ folder
+_load_key HF_TOKEN           hf_token
+_load_key HUGGINGFACE_TOKEN  hf_token
+_load_key HF_API_TOKEN       hf_token
+_load_key GEMINI_API_KEY     gemini_api_key
+_load_key ANTHROPIC_API_KEY  anthropic_api_key
+_load_key OPENAI_API_KEY     openai_api_key
+_load_key BRAVE_API_KEY      brave_api_key
+_load_key TAVILY_API_KEY     tavily_api_key
+_load_key NEO4J_PASSWORD     neo4j_password
+_load_key QDRANT_API_KEY     qdrant_api_key
+
+# Also source .env if it exists (values here override keys/ since shell already has them exported)
+if [[ -f "$SHELLLL_ROOT/.env" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    source "$SHELLLL_ROOT/.env"
+    set +a
+fi
 
 # --- PATH Additions -------------------------------------------------------
 # Local binaries, npm globals, SHELLLL scripts

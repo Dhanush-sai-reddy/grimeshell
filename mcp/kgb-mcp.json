@@ -1,0 +1,17 @@
+{
+  "_info": {
+    "name": "KGB-MCP — Knowledge Graph Builder",
+    "source": "https://huggingface.co/spaces/agents-mcp-hackathon/kgb-mcp",
+    "github": "https://github.com/rebots-online/hKG-ontologizer-KGB-mcp",
+    "type": "sse",
+    "description": "Knowledge Graph Builder MCP server. Transforms raw text or web content into structured, queryable knowledge graphs using local LLMs (Ollama/LM Studio). Supports 300MB+ content via intelligent chunking, Neo4j/Qdrant persistence, and real-time SVG graph visualization.",
+    "tags": ["knowledge-graph", "neo4j", "qdrant", "entities", "relations", "ontology", "RAG", "visualization"]
+  },
+  "mcpServers": {
+    "kgb-mcp": {
+      "type": "sse",
+      "url": "https://agents-mcp-hackathon-kgb-mcp.hf.space/gradio_api/mcp/sse",
+      "description": "KGB — build & query knowledge graphs from text/URLs, persist to Neo4j/Qdrant, visualize as SVG"
+    }
+  }
+}
